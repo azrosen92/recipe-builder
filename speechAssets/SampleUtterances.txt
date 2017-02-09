@@ -1,0 +1,10 @@
+GetRecipeIntent Find a recipe for {recipe_name}
+
+GetCurrentInstructionIntent What do I do now
+
+GetNextInstructionIntent What do I do next
+
+GetRecipeListIntent What do I need for this recipe
+
+GetIndividualIngredientIntent How much {recipe_item} do I need
+GetIndividualIngredientIntent How many {recipe_item} do I need
