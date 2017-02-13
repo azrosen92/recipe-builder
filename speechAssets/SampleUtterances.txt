@@ -1,10 +1,12 @@
-GetRecipeIntent Find a recipe for {recipe_name}
+GetRecipeIntent Find a recipe for {baked alaska | recipe_name}
 
 GetCurrentInstructionIntent What do I do now
 
 GetNextInstructionIntent What do I do next
 
 GetRecipeListIntent What do I need for this recipe
+GetRecipeListIntent What ingredients do I need
+GetRecipeListIntent What are the ingredients
 
-GetIndividualIngredientIntent How much {recipe_item} do I need
-GetIndividualIngredientIntent How many {recipe_item} do I need
+GetIndividualIngredientIntent How much {flour | recipe_item} do I need
+GetIndividualIngredientIntent How many {flour | recipe_item} do I need
