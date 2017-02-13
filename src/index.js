@@ -1,5 +1,6 @@
 
 var Alexa = require('alexa-sdk');
+var CallAPIs = require("./CallAPIs");
 
 const DYNAMO_TABLE_NAME = "recipe_dynamo_table";
 
@@ -17,20 +18,25 @@ var handlers = {
         this.emit(':ask', say, 'try again');
     },
     "GetRecipeIntent": function() { 
-        var recipeName = "Mac n' cheese"; //this.event.request.intent.slots.recipe_name.value;
+        var recipeName = this.event.request.intent.slots.recipe_name.value;
         // Search for recipe on Food52.com by the above recipeName.
-        var recipe = searchForRecipe(recipeName);
-        // Build JSON with data for recipe.
-        var recipeJson = parseRecipe(recipe);
-        // Store in Dynamo mapped to userId.
-        const STARTING_INSTRUCTION_NUMBER = 0;
-        // storeInDynamo(recipeJson, STARTING_INSTRUCTION_NUMBER)
-        this.attributes.recipe = recipeJson;
-        this.attributes.instruction_no = STARTING_INSTRUCTION_NUMBER;
+        CallAPIs.searchForRecipe(recipeName, response => {
+        	if (response == "NOT_FOUND") {
+        		this.emit(":tell", "Sorry, I couldn't find a recipe for " + recipeName + ", please try another search term.");
+        	} else {
+						// Build JSON with data for recipe.
+		        var recipeJson = parseRecipe(response);
+		        // Store in Dynamo mapped to userId.
+		        const STARTING_INSTRUCTION_NUMBER = 0;
+		        // storeInDynamo(recipeJson, STARTING_INSTRUCTION_NUMBER)
+		        this.attributes.recipe = recipeJson;
+		        this.attributes.instruction_no = STARTING_INSTRUCTION_NUMBER;
 
-        var recipeText = "Are you ready to cook " + recipeName + "?";
+		        var recipeText = "Are you ready to cook " + recipeName + "?";
 
-        this.emit(":ask", recipeText);
+		        this.emit(":ask", recipeText);
+        	}
+        });
     },
 
     "GetCurrentInstructionIntent": function() { 
