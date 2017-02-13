@@ -1,6 +1,7 @@
 
 var Alexa = require('alexa-sdk');
 var CallAPIs = require("./CallAPIs");
+var ResponseParser = require("./ResponseParser");
 
 const DYNAMO_TABLE_NAME = "recipe_dynamo_table";
 
@@ -25,7 +26,7 @@ var handlers = {
         		this.emit(":tell", "Sorry, I couldn't find a recipe for " + recipeName + ", please try another search term.");
         	} else {
 						// Build JSON with data for recipe.
-		        var recipeJson = parseRecipe(response);
+		        var recipeJson = ResponseParser.parseRecipe(response);
 		        // Store in Dynamo mapped to userId.
 		        const STARTING_INSTRUCTION_NUMBER = 0;
 		        // storeInDynamo(recipeJson, STARTING_INSTRUCTION_NUMBER)
