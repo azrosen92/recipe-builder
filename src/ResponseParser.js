@@ -18,7 +18,6 @@ module.exports = {
      }
     */
     parseRecipe: function(responseBody) {
-      console.log(responseBody);
       var $ = cheerio.load(responseBody);
 
       var ingredientsList = 
@@ -40,5 +39,25 @@ module.exports = {
         ingredients: ingredientsList,
         instructions: instructionsList
       }
+    },
+
+    /**
+    Builds a list of search results from the html in the search page.
+    [
+      {
+        recipe_name: "Name of recipe",
+        recipe_url: "/recipes/22758-bright-n-zesty-mac-n-cheese"
+      }, { }, ... { }
+    ]
+    */
+    parseSearchResults: function(responseBody) {
+      var $ = cheerio.load(responseBody);
+
+      return $('.recipe-results-tiles').find('div > h3 > a').map((_, recipeTileEl) => {
+        return {
+          recipe_name: $(recipeTileEl).attr('title'),
+          recipe_url: $(recipeTileEl).attr('href')
+        }
+      }).get();
     }
 };

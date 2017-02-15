@@ -15,29 +15,33 @@ exports.handler = function(event, context, callback){
 
 var handlers = {
     'LaunchRequest': function () {
-        var say = 'Welcome!';
-        this.emit(':ask', say, 'try again');
+      var say = 'Welcome!';
+      this.emit(':ask', say, 'try again');
     },
     "GetRecipeIntent": function() { 
-        var recipeName = this.event.request.intent.slots.recipe_name.value;
-        // Search for recipe on Food52.com by the above recipeName.
-        CallAPIs.searchForRecipe(recipeName, response => {
-        	if (response == "NOT_FOUND") {
-        		this.emit(":tell", "Sorry, I couldn't find a recipe for " + recipeName + ", please try another search term.");
+      var recipeName = this.event.request.intent.slots.recipe_name.value;
+      // Search for recipe on Food52.com by the above recipeName.
+      CallAPIs.searchForRecipe(recipeName, (searchResponse) => {
+      	// TODO: Cache search results.
+			  var recipe_url = ResponseParser.parseSearchResults(searchResponse)[0].recipe_url
+			  var recipe_json = CallAPIs.getRecipe(recipe_url, (recipeResponse) => {
+			  	if (recipeResponse == "NOT_FOUND") {
+      			this.emit(":tell", "Sorry, I couldn't find a recipe for " + recipeName + ", please try another search term.");
         	} else {
 						// Build JSON with data for recipe.
-		        var recipeJson = ResponseParser.parseRecipe(response);
+		        var recipeJson = ResponseParser.parseRecipe(recipeResponse);
 		        // Store in Dynamo mapped to userId.
 		        const STARTING_INSTRUCTION_NUMBER = 0;
 		        // storeInDynamo(recipeJson, STARTING_INSTRUCTION_NUMBER)
 		        this.attributes.recipe = recipeJson;
 		        this.attributes.instruction_no = STARTING_INSTRUCTION_NUMBER;
 
-		        var recipeText = "Are you ready to cook " + recipeName + "?";
+		        var recipeText = "Are you ready to cook " + recipeJson.title + "?";
 
 		        this.emit(":ask", recipeText);
         	}
-        });
+			  });
+			});
     },
 
     "GetCurrentInstructionIntent": function() { 
