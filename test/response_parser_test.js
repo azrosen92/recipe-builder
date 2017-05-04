@@ -1,7 +1,7 @@
 var ResponseParser = require('../src/ResponseParser');
 var fs = require('fs');
 
-fs.readFileSync("test_response.html", (err, data) => {
+fs.readFile("test_response.html", (err, data) => {
   if (err) {
     return console.log(err);
   }
